@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: circleci/golang:1.10
     
-    working_directory: /go/src/github.com/mlabouardy/docker-eb-ci-mon
+    working_directory: /go/src/github.com/devopsdymyr/docker-eb-ci-mon
 
     steps:
       - checkout
@@ -23,22 +23,22 @@ jobs:
       
       - run:
           name: Build
-          command: docker build -t mlabouardy/avengers:latest .
+          command: docker build -t devopsdymyr/avengers:latest .
       
       - run:
           name: Push
           command: |
             docker login -u$DOCKERHUB_LOGIN -p$DOCKERHUB_PASSWORD
-            docker tag mlabouardy/avengers:latest mlabouardy/avengers:${CIRCLE_SHA1}
-            docker push mlabouardy/avengers:latest
-            docker push mlabouardy/avengers:${CIRCLE_SHA1}
+            docker tag devopsdymyr/avengers:latest devopsdymyr/avengers:${CIRCLE_SHA1}
+            docker push devopsdymyr/avengers:latest
+            docker push devopsdymyr/avengers:${CIRCLE_SHA1}
       
       - run:
           name: Deploy
           command: |
             zip -r deployment-${CIRCLE_SHA1}.zip .
-            aws s3 cp deployment-${CIRCLE_SHA1}.zip s3://avengers-docker-eb --region eu-west-3
+            aws s3 cp deployment-${CIRCLE_SHA1}.zip s3://avengers-docker-eb1 --region eu-west-3
             aws elasticbeanstalk create-application-version --application-name avengers \
-                --version-label ${CIRCLE_SHA1} --source-bundle S3Bucket="avengers-docker-eb",S3Key="deployment-${CIRCLE_SHA1}.zip" --region eu-west-3
+                --version-label ${CIRCLE_SHA1} --source-bundle S3Bucket="avengers-docker-eb1",S3Key="deployment-${CIRCLE_SHA1}.zip" --region eu-west-3
             aws elasticbeanstalk update-environment --application-name avengers \
                 --environment-name staging --version-label ${CIRCLE_SHA1} --region eu-west-3
