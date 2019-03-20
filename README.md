@@ -1,4 +1,4 @@
-# Elastic Beanstalk Tips1
+# Elastic Beanstalk Tips
 
 * Deployment using Docker
 * Circle CI integration
